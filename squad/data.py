@@ -47,7 +47,9 @@ def fetch_squad_data(_sort=True, _flush=False):
 
         # dump vocabulary to R.VOCAB
         dump_vocabulary(  # combine text from context and question
-                [ x.context.text + ' ' + x.question for x in testset + trainset ]
+                [ x.context.text + ' ' + x.question for x in testset + trainset ],
+                frequency_threshold = R.VOCAB_FREQ, 
+                max_vocab_size = R.VOCAB_MAX_SIZE
                 )
 
         # cache data
@@ -58,4 +60,4 @@ def fetch_squad_data(_sort=True, _flush=False):
 
 if __name__ == '__main__':
 
-    train, test = fetch_squad_data()
+    train, test = fetch_squad_data(_flush=True)

@@ -4,3 +4,5 @@ DATA  ='../data/SQuAD/'
 LOOKUP='lookup/'
 CACHE ='.cache/'
 VOCAB ='lookup/vocabulary.txt'
+VOCAB_FREQ = 10
+VOCAB_MAX_SIZE = 50000

@@ -1,5 +1,5 @@
 from random import shuffle
-from nltk import word_tokenize
+from nltk import word_tokenize, FreqDist
 
 import resources as R
 import os
@@ -59,17 +59,33 @@ def indices_to_labels(indices, seqlen):
     write list of all words in sequences to disk
 
 '''
-def dump_vocabulary(sequences):
-    words = sorted(set([ w for seq in sequences 
-            for w in word_tokenize(seq) ]))
+def dump_vocabulary(sequences, frequency_threshold=0, max_vocab_size=0):
+    print(':: <textproc> [dump vocabulary]')
+
+    larg_text_chunk = ' '.join(sequences)
+    words = word_tokenize(larg_text_chunk)
+    # frequence distribution
+    freq_dist = FreqDist(words)
+    
+    # words sorted by frequency
+    #  most frequent on top
+    words_sorted  = sorted(set(words), key=lambda w : freq_dist[w], reverse=True)
+
+    # retain high frequency words
+    vocab = [ w for w in words_sorted if freq_dist[w] >= frequency_threshold ]
+
+    # size ceiling
+    if max_vocab_size:
+        vocab = vocab[:max_vocab_size]
+
     # check if lookup folder exists
     if not os.path.exists(R.LOOKUP):
         os.makedirs(R.LOOKUP)
- 
+
     # write to file
-    write_file(words, R.VOCAB)
-    print(':: <textproc> {} words written to vocabulary/lookup'.format(len(words)))
-    return words
+    write_file(vocab, R.VOCAB)
+    print(':: <textproc> [dump vocabulary] {} words written to lookup'.format(len(vocab)))
+    return vocab
 
 '''
     Split without bleeding
